@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agentic Bootstrapper IDE — Cheatsheet</title>
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --panel: #252526;
+    --border: #333333;
+    --accent: #0e639c;
+    --accent-hover: #1177bb;
+    --run: #16825d;
+    --stop: #a1260d;
+    --text: #d4d4d4;
+    --muted: #9d9d9d;
+    --dim: #6f6f6f;
+    --error: #f48771;
+    --success: #4ec9b0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+
+  h1 .accent { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2::before {
+    content: "§";
+    color: var(--accent);
+    margin-right: 10px;
+    font-weight: 400;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin: 24px 0 10px;
+  }
+
+  p { margin: 0 0 12px; }
+
+  code, kbd, pre {
+    font-family: Consolas, "Courier New", monospace;
+  }
+
+  code {
+    background: #2d2d2d;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12.5px;
+    color: #ce9178;
+  }
+
+  kbd {
+    background: #3c3c3c;
+    border: 1px solid #555;
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11.5px;
+    color: #fff;
+    font-family: Consolas, monospace;
+  }
+
+  pre {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 14px 16px;
+    border-radius: 3px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #d4d4d4;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 13px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--panel);
+    color: #fff;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  tr:hover td { background: #2a2a2a; }
+
+  td:first-child { color: #fff; white-space: nowrap; }
+  td code { white-space: nowrap; }
+
+  .button-ref {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+
+  .btn-primary { background: var(--accent); }
+  .btn-secondary { background: #3c3c3c; }
+  .btn-run { background: var(--run); }
+  .btn-stop { background: var(--stop); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 16px 0 24px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+
+  .card h4 {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .card .tag {
+    display: inline-block;
+    background: #0d3a52;
+    color: #4ec9b0;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .callout {
+    background: var(--panel);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 3px 3px 0;
+    font-size: 13px;
+  }
+
+  .callout.warn {
+    border-left-color: var(--error);
+    background: #2a1a18;
+  }
+
+  .callout.success {
+    border-left-color: var(--success);
+    background: #1a2620;
+  }
+
+  .callout strong { color: #fff; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 16px 0;
+  }
+
+  .two-col ul { margin: 0; padding-left: 20px; }
+  .two-col li { margin-bottom: 6px; font-size: 13px; }
+
+  ul.clean {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 16px;
+  }
+
+  ul.clean li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    font-size: 13px;
+  }
+
+  ul.clean li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  ul.clean li.no::before { content: "✗"; color: var(--error); }
+  ul.clean li.yes::before { content: "✓"; color: var(--success); }
+
+  .ascii-diagram {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px;
+    font-family: Consolas, monospace;
+    font-size: 11.5px;
+    color: #858585;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.4;
+  }
+
+  .ascii-diagram .hl { color: var(--accent); font-weight: bold; }
+  .ascii-diagram .run-hl { color: var(--success); font-weight: bold; }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--dim);
+    font-size: 11.5px;
+    text-align: center;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  @media print {
+    body { background: #fff; color: #111; }
+    header { border-color: #ccc; }
+    h1, h2, h3, h4 { color: #000; }
+    h2 { border-color: #ccc; }
+    th { background: #eee; color: #000; }
+    td, th { border-color: #ccc; }
+    pre, code, .ascii-diagram {
+      background: #f5f5f5;
+      color: #111;
+      border-color: #ccc;
+    }
+    .card, .callout { background: #f8f8f8; border-color: #ccc; }
+    .muted, .subtitle, .card p { color: #444; }
+    a { color: #0e639c; }
+    .button-ref { border: 1px solid #333; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1><span class="accent">⚡</span> Agentic Bootstrapper IDE</h1>
+  <p class="subtitle">Complete cheatsheet — every feature, every button, every shortcut</p>
+  <div style="margin-top: 12px;">
+    <span class="badge">PyQt6</span>
+    <span class="badge">Qwen2.5-Coder 1.5B</span>
+    <span class="badge">Offline AI</span>
+    <span class="badge">CPU-only</span>
+    <span class="badge">Windows 10/11</span>
+  </div>
+</header>
+
+<!-- ==================================================================== -->
+<h2>What this IDE is</h2>
+
+<p>A local, offline <strong>bootstrap launcher</strong> for Python projects. It creates a folder, installs a virtual environment, installs dependencies, warns you before running hardware-heavy code, and hands you off to VS Code. It ships with a local Qwen2.5-Coder assistant that runs entirely from disk — no API keys, no network, no usage limits.</p>
+
+<div class="callout">
+<strong>One sentence:</strong> Double-click → pick a template → 30 seconds later you have a working project in VS Code. That's the entire value.
+</div>
+
+<!-- ==================================================================== -->
+<h2>Installation</h2>
+
+<h3>Requirements</h3>
+<ul class="clean">
+  <li>Windows 10 or 11</li>
+  <li>Python 3.9+ installed from <a href="https://python.org">python.org</a> with <strong>"Add Python to PATH"</strong> ticked during installation</li>
+  <li>~3 GB free disk (the GGUF model is ~1 GB)</li>
+  <li>4-core CPU, 8 GB RAM minimum (Intel i5 or equivalent)</li>
+</ul>
+
+<h3>Folder layout</h3>
+<pre>your-folder\
+├── ai_ide.py                ← the application
+├── build.bat                ← double-click to build the exe
+├── README.md                ← optional
+├── cheatsheet.html          ← this file
+└── model\
+    └── qwen2.5-coder-1.5b-instruct-q4_k_m.gguf    ← ~1 GB</pre>
+
+<h3>Build</h3>
+<ol>
+  <li>Double-click <code>build.bat</code></li>
+  <li>Wait 3–6 minutes (first run only — subsequent rebuilds are ~2 min)</li>
+  <li>Launches automatically → <code>dist\ai_ide\ai_ide.exe</code></li>
+</ol>
+
+<div class="callout success">
+<strong>Zero manual pip.</strong> The batch file auto-installs PyQt6, psutil, llama-cpp-python, and PyInstaller into your global Python if they're missing. You only need to have Python itself.
+</div>
+
+<h3>Run without building</h3>
+<pre>pip install PyQt6 psutil
+pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+python ai_ide.py</pre>
+
+<!-- ==================================================================== -->
+<h2>Window layout</h2>
+
+<div class="ascii-diagram">┌──────────────────────────────────────────────────────────────────────────────┐
+│ <span class="hl">project_name</span>          CPU 12%   RAM 42%   GPU: Integrated UHD       [Setup Venv] [Install Reqs] <span class="run-hl">▶ Run Script</span> [■ Stop] [Open in VS Code] │
+├───────────────────┬─────────────────────────────────────────┬──────────────────┤
+│ <span class="hl">EXPLORER</span>          │ <span class="hl">EDITOR</span>                                  │ <span class="hl">AI COMPANION</span>     │
+│                   │ ┌─ app.py ─┬─ main.py ─┐                │                  │
+│ ▸ project/        │ │ 1  from flask ...                   │ │ You: what does   │
+│   ▸ templates/    │ │ 2                                    │ │      this do?   │
+│   ▸ static/       │ │ 3  app = Flask(__name__)            │ │                  │
+│   app.py          │ │ 4                                    │ │ Qwen: This is a  │
+│   requirements.txt│ │ 5  @app.route("/")                  │ │ Flask notes app  │
+│                   │ │ 6  def home():                      │ │ with three...    │
+│ [New File]        │ │ 7      return render_template...    │ │                  │
+│ [Refresh]         │ │                                     │ │ 📎 📁 [Ask...]  │
+│                   │ │                                     │ │           [Send] │
+├───────────────────┴─────────────────────────────────────────┴──────────────────┤
+│ <span class="hl">TERMINAL</span> · Ctrl+C to interrupt                                                │
+│ [venv] creating virtual environment at ...\.venv                             │
+│ [pip] Successfully installed flask-3.1.3 Jinja2-3.1.6 ...                    │
+│ [run] app.py                                                                 │
+│  * Running on http://127.0.0.1:5000                                          │
+└──────────────────────────────────────────────────────────────────────────────┘</div>
+
+<!-- ==================================================================== -->
+<h2>Every button, explained</h2>
+
+<table>
+<thead><tr><th>Button</th><th>What it does</th><th>When to use</th></tr></thead>
+<tbody>
+<tr>
+  <td><span class="button-ref btn-secondary">Setup Venv</span></td>
+  <td>Creates <code>.venv/</code>, bootstraps pip via <code>ensurepip</code>, upgrades pip/setuptools/wheel, then auto-installs <code>requirements.txt</code> if present. Self-heals if pip is missing (downloads <code>get-pip.py</code>).</td>
+  <td>First time on a new project, or after deleting <code>.venv/</code></td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-secondary">Install Reqs</span></td>
+  <td>Runs <code>pip install -r requirements.txt</code> inside the existing <code>.venv</code>. Writes <code>pip.ini</code> with CPU-torch index if the file mentions <code>torch</code>.</td>
+  <td>After editing <code>requirements.txt</code></td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-run">▶ Run Script</span></td>
+  <td>Saves the active file, scans for ML keywords (guardrail), then runs with <code>.venv\Scripts\python.exe</code> (or system Python if no venv). Streams output live.</td>
+  <td>Test your code without leaving the IDE</td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-stop">■ Stop</span></td>
+  <td>Kills the running process tree via <code>taskkill /F /T</code>. Cleanly stops Flask/FastAPI/Django servers.</td>
+  <td>Stop a blocking process (server, GUI, long loop)</td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-primary">Open in VS Code</span></td>
+  <td>Launches <code>code &lt;project-folder&gt;</code>. VS Code auto-detects the <code>.venv</code>.</td>
+  <td>The moment you outgrow the built-in editor</td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-secondary">📎</span></td>
+  <td>Attaches the <strong>active file</strong> (or your <strong>selection</strong>) to the next chat message. Auto-unchecks after one send.</td>
+  <td>"Explain this function", "refactor this block"</td>
+</tr>
+<tr>
+  <td><span class="button-ref btn-secondary">📁</span></td>
+  <td>Attaches the <strong>whole project tree + small files</strong> (up to ~7000 tokens). Logs how many files fit and how many were skipped.</td>
+  <td>"What does this project do?", "review the structure"</td>
+</tr>
+</tbody>
+</table>
+
+<!-- ==================================================================== -->
+<h2>Keyboard shortcuts</h2>
+
+<table>
+<thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><kbd>F5</kbd></td><td>Run the active file</td></tr>
+<tr><td><kbd>Shift</kbd>+<kbd>F5</kbd></td><td>Stop the running process</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Save the active file</td></tr>
+<tr><td><kbd>F11</kbd></td><td>Toggle fullscreen / maximized</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>In terminal: interrupt running process. With text selected: copy</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>In chat input: send message</td></tr>
+</tbody>
+</table>
+
+<!-- ==================================================================== -->
+<h2>Templates (12 total)</h2>
+
+<div class="card-grid">
+
+<div class="card">
+  <h4>Empty Project</h4>
+  <p>Nothing. Just a folder. Use when you'll scaffold manually.</p>
+</div>
+
+<div class="card">
+  <h4>Python Script</h4>
+  <p>Single <code>main.py</code> that prints hello. Good for quick tests.</p>
+  <span class="tag">No deps</span>
+</div>
+
+<div class="card">
+  <h4>CLI Tool (argparse)</h4>
+  <p>Working CLI with <code>--name</code> and <code>--count</code> args.</p>
+  <span class="tag">No deps</span>
+</div>
+
+<div class="card">
+  <h4>Flask Web App</h4>
+  <p>Notes app: <code>/</code>, <code>/api/notes</code> (GET+POST), <code>/health</code>. Dark-themed HTML template.</p>
+  <span class="tag">pip: flask</span>
+</div>
+
+<div class="card">
+  <h4>FastAPI Web API</h4>
+  <p>Typed API with Pydantic models, auto Swagger at <code>/docs</code>.</p>
+  <span class="tag">pip: fastapi uvicorn</span>
+</div>
+
+<div class="card">
+  <h4>Django Web App</h4>
+  <p>Minimal Django with one JSON endpoint. Ships a <code>README.md</code> explaining <code>runserver</code>.</p>
+  <span class="tag">pip: django</span>
+</div>
+
+<div class="card">
+  <h4>Data Science (pandas)</h4>
+  <p>DataFrame demo: shape, head, describe, group means.</p>
+  <span class="tag">pip: pandas numpy matplotlib</span>
+</div>
+
+<div class="card">
+  <h4>ML Starter (sklearn CPU)</h4>
+  <p>Linear regression demo + a <code>guardrail_demo.py</code> for testing the hardware warning.</p>
+  <span class="tag">pip: sklearn pandas numpy</span>
+</div>
+
+<div class="card">
+  <h4>Web Scraper</h4>
+  <p>requests + BeautifulSoup demo. Fetches <code>example.com</code> and prints h1.</p>
+  <span class="tag">pip: requests bs4</span>
+</div>
+
+<div class="card">
+  <h4>Tkinter GUI</h4>
+  <p>Small desktop app with input + greet button. Pure stdlib.</p>
+  <span class="tag">No deps</span>
+</div>
+
+<div class="card">
+  <h4>Package (setuptools)</h4>
+  <p>Installable package with <code>pyproject.toml</code> + <code>mypkg/</code>. Install with <code>pip install -e .</code>.</p>
+  <span class="tag">No deps</span>
+</div>
+
+<div class="card">
+  <h4>Pytest Test Suite</h4>
+  <p>Five working tests including parametrized cases. F5 runs the whole suite.</p>
+  <span class="tag">pip: pytest</span>
+</div>
+
+</div>
+
+<!-- ==================================================================== -->
+<h2>The AI companion</h2>
+
+<p>Runs locally from a quantized Qwen2.5-Coder-1.5B model. Config: <code>n_ctx=8192</code>, <code>n_threads=4</code>, <code>n_batch=256</code>, <code>max_tokens=512</code> per reply, <code>temperature=0.4</code>.</p>
+
+<h3>What it's good at</h3>
+<ul class="clean">
+  <li class="yes">"Explain this function" (with 📎 + selection)</li>
+  <li class="yes">"Refactor to use a list comprehension" (with 📎)</li>
+  <li class="yes">"Write a Flask route that returns JSON with pagination"</li>
+  <li class="yes">"Debug: this returns None, why?" (with 📎 + selection)</li>
+  <li class="yes">"What does this project do?" (with 📁 on small projects)</li>
+  <li class="yes">"How do I run a small LLM on 8 GB without a GPU?"</li>
+  <li class="yes">"Write pytest tests for this function"</li>
+</ul>
+
+<h3>What it can't do</h3>
+<ul class="clean">
+  <li class="no">Run code, edit files, or install packages</li>
+  <li class="no">Access the internet (fully offline)</li>
+  <li class="no">See files you didn't attach with 📎 or 📁</li>
+  <li class="no">Handle projects larger than ~2000 lines (context limit)</li>
+  <li class="no">Suggest CUDA-only code (system prompt forbids it)</li>
+  <li class="no">Remember conversations across IDE restarts</li>
+  <li class="no">Replace Copilot / Claude / Cursor for large projects</li>
+</ul>
+
+<h3>📎 vs 📁 — when to use which</h3>
+
+<table>
+<thead><tr><th>You want to…</th><th>Use</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Explain a specific function</td><td>📎 + selection</td><td>Only sends the selected lines (~500 tokens)</td></tr>
+<tr><td>Review one file</td><td>📎 (no selection)</td><td>Sends the whole file (~1500 tokens)</td></tr>
+<tr><td>Understand project structure</td><td>📁</td><td>Tree + contents of small files, budget-aware</td></tr>
+<tr><td>Debug cross-file issue</td><td>📁 then follow up with 📎</td><td>📁 for context, 📎 for the file that matters</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<strong>The 8192-token reality:</strong> after the system prompt (~120) and chat history (~600), you have ~7000 tokens for the bundle. That's about <strong>2000 lines of code total</strong>. Anything larger and 📁 starts skipping files — you'll see <code>[chat] warning: project context is large</code> in the terminal.
+</div>
+
+<!-- ==================================================================== -->
+<h2>Hardware guardrail</h2>
+
+<p>Before running any script, the IDE scans the source for heavy ML/DL patterns:</p>
+
+<pre>torch · tensorflow · transformers · .fit( · nn.Module</pre>
+
+<p>If any are found, a dialog appears <strong>before execution</strong>:</p>
+
+<div class="ascii-diagram">┌─────────────────────────────────────────────────────────┐
+│ ⚠  Hardware Guardrail                                    │
+│                                                          │
+│ Heavy ML/DL code detected in the active editor.          │
+│                                                          │
+│ Detected: torch (PyTorch), nn.Module neural network      │
+│                                                          │
+│ Hardware profile "aryan":                                │
+│ • CPU: Intel Core i5, 4 cores — training will saturate   │
+│ • RAM: 8 GB — large models may swap or OOM               │
+│ • GPU: integrated Intel UHD only — no CUDA acceleration  │
+│                                                          │
+│ Suggestions: use CPU wheels, small batch sizes,          │
+│ quantized models, prefer inference over training.        │
+│                                                          │
+│ Run anyway?                                              │
+│                                                          │
+│            [ Abort ]      [ Proceed Anyway ]             │
+└─────────────────────────────────────────────────────────┘</div>
+
+<p><strong>Abort</strong> → nothing runs. <strong>Proceed Anyway</strong> → the script runs and likely fails with <code>ModuleNotFoundError</code> (torch isn't installed). That's fine — the point is the <em>warning</em>, not running the code.</p>
+
+<div class="callout warn">
+<strong>Note:</strong> the guardrail is a source-code regex, not an import check. It fires on code you <em>haven't installed dependencies for</em>. That's intentional — it stops you before you waste time installing 200 MB of torch only to discover it OOMs on your 8 GB machine.
+</div>
+
+<!-- ==================================================================== -->
+<h2>Venv / pip pipeline explained</h2>
+
+<p>When you click <strong>Setup Venv</strong> (or a fresh project auto-fires it), the IDE runs these steps in a background thread:</p>
+
+<pre>1. python -m venv .venv
+      ↳ self-heals: if ensurepip is missing, downloads get-pip.py
+2. .venv\Scripts\python.exe -m pip install --upgrade pip setuptools wheel
+3. If requirements.txt mentions "torch":
+      ↳ writes .venv\pip.ini with extra-index-url = https://download.pytorch.org/whl/cpu
+4. If requirements.txt exists:
+      ↳ .venv\Scripts\python.exe -m pip install -r requirements.txt</pre>
+
+<h3>Why the CPU-torch step matters</h3>
+
+<p>Default <code>pip install torch</code> on Windows pulls the <strong>2.5 GB CUDA wheel</strong>. On your machine with no NVIDIA GPU, that fails at <code>import torch</code> because there's no CUDA driver to bind to. The IDE auto-writes a <code>pip.ini</code> that points pip at PyTorch's CPU-only index, giving you the <strong>~200 MB</strong> CPU wheel instead.</p>
+
+<div class="callout">
+<strong>When does this trigger?</strong> Only if <code>requirements.txt</code> contains the word "torch". If you add torch later, click <strong>Install Reqs</strong> — it re-checks and writes the ini.
+</div>
+
+<!-- ==================================================================== -->
+<h2>Common workflows</h2>
+
+<h3>Flask app in 90 seconds</h3>
+<pre>1. Launch IDE → splash → model loads
+2. Project name: flask_test, template: Flask Web App
+3. Click Create Project
+4. Wait for:
+   [venv] ready
+   [pip] Dependencies installed.
+5. Press F5 → server starts on :5000
+6. Open browser → http://127.0.0.1:5000
+7. Ctrl+C in terminal (or Stop) when done
+8. Click Open in VS Code → continue working there</pre>
+
+<h3>Pytest suite in 60 seconds</h3>
+<pre>1. Project name: test_suite, template: Pytest Test Suite
+2. Create Project
+3. Wait for [pip] Dependencies installed.
+4. Press F5 → pytest runs
+   ===== 5 passed in 0.12s =====</pre>
+
+<h3>Debugging with the AI</h3>
+<pre>1. Editor: select the problematic function
+2. Click 📎 (turns blue)
+3. Type: "this returns None, why?"
+4. Click Send → Qwen reads the selection and explains</pre>
+
+<h3>Understanding a fresh project</h3>
+<pre>1. Click 📁
+2. Type: "what does this project do?"
+3. Qwen gets the tree + small files → describes the whole thing</pre>
+
+<!-- ==================================================================== -->
+<h2>What logs to look for</h2>
+
+<p>The terminal is your diagnostic tool. Every stage prints a marker:</p>
+
+<table>
+<thead><tr><th>Line</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>[workspace] C:\...\folder</code></td><td>Project root locked in</td></tr>
+<tr><td><code>[venv] detected: ...\python.exe</code></td><td>Reusing existing venv</td></tr>
+<tr><td><code>[auto] fresh project — bootstrapping...</code></td><td>Auto-bootstrap fired</td></tr>
+<tr><td><code>[venv] ready: ...\python.exe</code></td><td>Venv created successfully</td></tr>
+<tr><td><code>[pip] Dependencies installed.</code></td><td><strong>Green light — safe to press F5</strong></td></tr>
+<tr><td><code>[model] Qwen2.5-Coder loaded</code></td><td>Chat is ready</td></tr>
+<tr><td><code>[frozen] system Python: ...</code></td><td>Exe mode — found system Python for venv/run</td></tr>
+<tr><td><code>[run] process exited with code 0</code></td><td>Script succeeded</td></tr>
+<tr><td><code>[guardrail] run aborted by user</code></td><td>You clicked Abort on the ML dialog</td></tr>
+</tbody>
+</table>
+
+<!-- ==================================================================== -->
+<h2>Troubleshooting</h2>
+
+<table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr>
+  <td>Build fails: <code>Python not found</code></td>
+  <td>Python not on PATH</td>
+  <td>Reinstall Python from python.org, tick "Add Python to PATH"</td>
+</tr>
+<tr>
+  <td>Exe opens then closes instantly</td>
+  <td>Startup exception, no console to show it</td>
+  <td>Check <code>dist\ai_ide\ai_ide_crash.log</code></td>
+</tr>
+<tr>
+  <td><code>[model] not loaded</code> in terminal</td>
+  <td>GGUF missing or wrong path</td>
+  <td>Verify <code>dist\ai_ide\model\qwen2.5-coder-1.5b-instruct-q4_k_m.gguf</code> exists</td>
+</tr>
+<tr>
+  <td><code>[frozen] WARNING: no system Python</code></td>
+  <td>Exe can't find Python for venv/run</td>
+  <td>Add Python install folder to PATH</td>
+</tr>
+<tr>
+  <td>Windows Defender blocks exe</td>
+  <td>PyInstaller exes look suspicious to Defender</td>
+  <td>Add <code>dist\</code> folder to Defender exclusions</td>
+</tr>
+<tr>
+  <td><code>ModuleNotFoundError: No module named 'flask'</code></td>
+  <td>Pip install hasn't finished yet</td>
+  <td>Wait for <code>[pip] Dependencies installed.</code> before pressing F5</td>
+</tr>
+<tr>
+  <td>Ctrl+C does nothing</td>
+  <td>Terminal isn't focused</td>
+  <td>Click into the black terminal panel first</td>
+</tr>
+<tr>
+  <td>Chat says "model not loaded"</td>
+  <td>llama-cpp-python failed to install during build</td>
+  <td>Run <code>pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu</code></td>
+</tr>
+<tr>
+  <td>Django Run button doesn't start the server</td>
+  <td>Django needs <code>runserver</code> argument</td>
+  <td>Use VS Code's terminal: <code>.venv\Scripts\python.exe manage.py runserver</code></td>
+</tr>
+<tr>
+  <td>AI answer cuts off mid-sentence</td>
+  <td>Hit 512-token reply limit</td>
+  <td>Ask a more focused question</td>
+</tr>
+</tbody>
+</table>
+
+<!-- ==================================================================== -->
+<h2>What this IDE cannot do</h2>
+
+<p>Be realistic about the tool before you commit to it.</p>
+
+<div class="two-col">
+<div>
+<h3 style="margin-top:0">The editor is a scratchpad</h3>
+<ul class="clean">
+  <li class="no">No syntax highlighting</li>
+  <li class="no">No autocomplete / LSP</li>
+  <li class="no">No debugger / breakpoints</li>
+  <li class="no">No find/replace</li>
+  <li class="no">No git integration</li>
+  <li class="no">No multi-file refactoring</li>
+</ul>
+<p style="color: var(--muted); font-size:12.5px; margin-top:8px;">Use VS Code for anything beyond the bootstrap phase. That's the point of the "Open in VS Code" button.</p>
+</div>
+<div>
+<h3 style="margin-top:0">The AI is a small local model</h3>
+<ul class="clean">
+  <li class="no">Not GPT-4 / Claude class</li>
+  <li class="no">No internet access</li>
+  <li class="no">8192-token context limit</li>
+  <li class="no">No file-system access</li>
+  <li class="no">Can't run code</li>
+  <li class="no">Hallucinates library APIs sometimes</li>
+</ul>
+<p style="color: var(--muted); font-size:12.5px; margin-top:8px;">1.5B params is a toy compared to 200B+ models. Verify its output. It's a bootstrap assistant, not a senior dev.</p>
+</div>
+</div>
+
+<!-- ==================================================================== -->
+<h2>Rebuilding after code changes</h2>
+
+<p>If you edit <code>ai_ide.py</code>:</p>
+
+<pre>1. Double-click build.bat
+2. Wait ~2 minutes (faster than the first build)
+3. Test dist\ai_ide\ai_ide.exe</pre>
+
+<p>The batch deletes <code>build/</code> and <code>dist/</code> automatically, then rebuilds clean.</p>
+
+<h3>Rollback</h3>
+<pre>copy ai_ide.py.bak ai_ide.py</pre>
+
+<p>The <code>.bak</code> file was created by the patcher — it holds the pre-patch version.</p>
+
+<!-- ==================================================================== -->
+<h2>Sharing this IDE</h2>
+
+<p>Give someone the whole folder:</p>
+
+<pre>ai-ide\
+├── ai_ide.py
+├── build.bat
+├── README.md
+├── cheatsheet.html
+└── model\
+    └── qwen2.5-coder-1.5b-instruct-q4_k_m.gguf    ← ~1 GB</pre>
+
+<p>They:</p>
+
+<ol>
+  <li>Install Python 3.9+ from python.org (tick "Add to PATH")</li>
+  <li>Double-click <code>build.bat</code></li>
+  <li>Double-click <code>dist\ai_ide\ai_ide.exe</code></li>
+</ol>
+
+<div class="callout">
+<strong>No pip install needed on their side.</strong> The batch file detects and installs PyQt6, psutil, llama-cpp-python, PyInstaller automatically. Only Python is required.
+</div>
+
+<p>If they don't have the model (too big to share easily), the exe still builds and runs — chat just stays disabled until they add the GGUF.</p>
+
+<!-- ==================================================================== -->
+<h2>Quick reference card</h2>
+
+<div class="ascii-diagram"><span class="hl">SHORTCUTS</span>
+    F5              Run active file
+    Shift+F5        Stop running process
+    Ctrl+S          Save active file
+    F11             Toggle fullscreen
+    Ctrl+C          Interrupt (in terminal) / Copy (with selection)
+    Enter           Send chat message
+
+<span class="hl">BUTTONS</span>
+    Setup Venv      Create .venv + install requirements
+    Install Reqs    Re-run pip install -r requirements.txt
+    ▶ Run Script    Save + guardrail + execute
+    ■ Stop          Kill process tree
+    Open in VS Code Hand off to VS Code
+    📎              Attach active file or selection
+    📁              Attach whole project
+
+<span class="hl">TERMINAL MARKERS</span>
+    [venv] ready                    → venv created, ok to proceed
+    [pip] Dependencies installed.   → GREEN LIGHT, press F5 now
+    [model] loaded                  → chat is ready
+    [frozen] system Python: ...     → exe mode works
+    [run] process exited with code  → script finished
+
+<span class="hl">FAILURE MARKERS</span>
+    [model] not loaded              → GGUF missing
+    [frozen] no system Python       → PATH issue
+    [pip] failed: ...               → check network / PyPI
+    ModuleNotFoundError             → pip hasn't finished, wait</div>
+
+<footer>
+  Agentic Bootstrapper IDE · Cheatsheet v1.0<br>
+  Runs offline · Qwen2.5-Coder 1.5B · CPU-only · No API keys
+</footer>
+
+</div>
+</body>
+</html>
